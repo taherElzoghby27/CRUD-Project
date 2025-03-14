@@ -1,0 +1,15 @@
+/* Snackbar Styling */
+.snackbar {
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #E63946;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
