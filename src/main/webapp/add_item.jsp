@@ -111,8 +111,6 @@ form {
 	<div class="dashboard">
 		<form action="UserController"  method="post">
 			<h1>Add Item</h1>
-			<input class="input-text" type="text" id="id" name="id" placeholder="Enter your id" required>
-				<br> 
 			<input class="input-text" type="text" id="name" name="name" placeholder="Enter your order name" required>
 				<br> 
 		    <input class="input-text" type="text" id="price" name="price" placeholder="Enter your order price" required>

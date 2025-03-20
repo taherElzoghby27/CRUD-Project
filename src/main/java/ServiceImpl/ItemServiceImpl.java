@@ -68,12 +68,11 @@ public class ItemServiceImpl implements ItemService {
 	public boolean addItem(Item item) throws Exception {
 		try {
 			Connection connection = dataSource.getConnection();
-			String query = "insert into hr.item values(?,?,?,?)";
+			String query = "insert into hr.item (name,price,total_price) values(?,?,?)";
 			PreparedStatement statement = connection.prepareStatement(query);
-			statement.setInt(1, item.getId());
-			statement.setString(2, item.getName());
-			statement.setDouble(3, item.getPrice());
-			statement.setDouble(4, item.getTotalPrice());
+			statement.setString(1, item.getName());
+			statement.setDouble(2, item.getPrice());
+			statement.setDouble(3, item.getTotalPrice());
 			int result = statement.executeUpdate();
 			return result > 0;
 		} catch (Exception e) {
@@ -131,13 +130,12 @@ public class ItemServiceImpl implements ItemService {
 	public boolean addDetailsItem(ItemDetails itemDetails) throws Exception {
 		try {
 			Connection connection = dataSource.getConnection();
-			String query = "insert into hr.ITEM_DETAILS values(?,?,?,?,?)";
+			String query = "insert into hr.ITEM_DETAILS (describtion,issue_date,expiry_data,item_id) values(?,?,?,?)";
 			PreparedStatement statement = connection.prepareStatement(query);
-			statement.setInt(1, itemDetails.getId());
-			statement.setString(2, itemDetails.getDescription());
-			statement.setDate(3, Date.valueOf(itemDetails.getIssueDate()));
-			statement.setDate(4, Date.valueOf(itemDetails.getExpireDate()));
-			statement.setInt(5, itemDetails.getItemId());
+			statement.setString(1, itemDetails.getDescription());
+			statement.setDate(2, Date.valueOf(itemDetails.getIssueDate()));
+			statement.setDate(3, Date.valueOf(itemDetails.getExpireDate()));
+			statement.setInt(4, itemDetails.getItemId());
 			int result = statement.executeUpdate();
 			return result > 0;
 		} catch (Exception e) {

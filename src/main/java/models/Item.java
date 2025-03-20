@@ -7,6 +7,14 @@ public class Item {
 	private double totalPrice;
 	private ItemDetails itemDetails;
 
+	public Item(String name, double price, double totalPrice, ItemDetails itemDetails) {
+		this.name = name;
+		this.price = price;
+		this.totalPrice = totalPrice;
+		this.itemDetails = itemDetails;
+	}
+	
+
 	public Item(int id, String name, double price, double totalPrice, ItemDetails itemDetails) {
 		this.id = id;
 		this.name = name;
@@ -14,6 +22,7 @@ public class Item {
 		this.totalPrice = totalPrice;
 		this.itemDetails = itemDetails;
 	}
+
 
 	public int getId() {
 		return id;

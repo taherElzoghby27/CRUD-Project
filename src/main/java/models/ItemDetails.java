@@ -7,6 +7,13 @@ public class ItemDetails {
 	private String expireDate;
 	private int itemId;
 
+	public ItemDetails(String description, String issueDate, String expireDate, int itemId) {
+		this.description = description;
+		this.issueDate = issueDate;
+		this.expireDate = expireDate;
+		this.itemId = itemId;
+	}
+
 	public ItemDetails(int id, String description, String issueDate, String expireDate, int itemId) {
 		this.id = id;
 		this.description = description;

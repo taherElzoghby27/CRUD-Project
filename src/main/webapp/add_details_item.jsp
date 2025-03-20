@@ -110,8 +110,6 @@ form {
 	<div class="dashboard">
 		<form action="UserController"  method="post">
 			<h1>Add Details</h1>
-			<input class="input-text" type="text" id="id" name="id" placeholder="Enter id" required>
-				<br> 
 			<input class="input-text" type="text" id="description" name="description" placeholder="Enter description" required>
 				<br> 
 		    <input class="input-text" type="date" id="issue_date" name="issue_date" placeholder="Enter issue date" required>
