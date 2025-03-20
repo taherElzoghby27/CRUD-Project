@@ -74,7 +74,8 @@ public class ItemServiceImpl implements ItemService {
 			statement.setString(2, item.getName());
 			statement.setDouble(3, item.getPrice());
 			statement.setDouble(4, item.getTotalPrice());
-			return statement.execute();
+			int result = statement.executeUpdate();
+			return result > 0;
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
@@ -87,7 +88,8 @@ public class ItemServiceImpl implements ItemService {
 			String query = "delete from hr.item where id = ? ";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setInt(1, id);
-			return statement.execute();
+			int result = statement.executeUpdate();
+			return result > 0;
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
@@ -97,7 +99,7 @@ public class ItemServiceImpl implements ItemService {
 	public boolean updateItem(Item item) throws Exception {
 		try {
 			Connection connection = dataSource.getConnection();
-			if (item.getItemDetails()!=null&&item.getItemDetails().getDescription() != null) {
+			if (item.getItemDetails() != null && item.getItemDetails().getDescription() != null) {
 				String query = "UPDATE hr.ITEM_DETAILS SET DESCRIBTION=?, ISSUE_DATE =?, EXPIRY_DATA=? WHERE ITEM_DETAILS.ITEM_ID = ? ";
 				PreparedStatement statement = connection.prepareStatement(query);
 				statement.setString(1, item.getItemDetails().getDescription());
@@ -136,7 +138,8 @@ public class ItemServiceImpl implements ItemService {
 			statement.setDate(3, Date.valueOf(itemDetails.getIssueDate()));
 			statement.setDate(4, Date.valueOf(itemDetails.getExpireDate()));
 			statement.setInt(5, itemDetails.getItemId());
-			return statement.execute();
+			int result = statement.executeUpdate();
+			return result > 0;
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
@@ -149,7 +152,8 @@ public class ItemServiceImpl implements ItemService {
 			String query = "DELETE FROM hr.item_details WHERE item_id = ? ";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setInt(1, itemId);
-			return statement.execute();
+			int result = statement.executeUpdate();
+			return result > 0;
 		} catch (Exception e) {
 			throw new Exception(e);
 		}

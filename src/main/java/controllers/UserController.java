@@ -9,14 +9,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
 import ServiceImpl.ItemServiceImpl;
 import Services.ItemService;
 import models.Item;
 import models.ItemDetails;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @WebServlet("/UserController")
 public class UserController extends HttpServlet {
@@ -38,8 +37,10 @@ public class UserController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String action = request.getParameter("action");
+		System.out.println("get action : " + action);
 		if (action == null) {
 			action = "load-items";
+			System.out.println("get action : " + action);
 		}
 		switch (action) {
 		case "load-items":
@@ -56,6 +57,7 @@ public class UserController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String action = request.getParameter("action");
+		System.out.println("post action : " + action);
 		if (action == null) {
 			doGet(request, response);
 		}
@@ -84,72 +86,130 @@ public class UserController extends HttpServlet {
 	private void deleteDetailsItem(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
 			int itemId = Integer.parseInt(request.getParameter("item-id"));
-			itemService.deleteDetailsItem(itemId);
+			List<Item> items = itemsFromSession(request);
+			if (request.getParameter("item-id") != null) {
+				boolean result = itemService.deleteDetailsItem(itemId);
+				if (result) {
+					for (int i = 0; i < items.size(); i++) {
+						if (items.get(i).getId() == itemId) {
+							items.get(i).setItemDetails(new ItemDetails());
+							items.set(i, items.get(i));
+							break;
+						}
+					}
+				}
+			}
+
 			loadItems(request, response);
 		} catch (Exception e) {
 			loadItems(request, response);
 		}
 	}
 
-	private void addDetailsItem(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+	private void addDetailsItem(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
 		try {
 			int id = Integer.parseInt(request.getParameter("id"));
 			String desc = request.getParameter("description");
 			String issue_date = request.getParameter("issue_date");
 			String expire_date = request.getParameter("expire_date");
 			int itemId = Integer.parseInt(request.getParameter("item-id"));
-			ItemDetails itemDetails = new ItemDetails(id, desc, issue_date, expire_date, itemId);
-			itemService.addDetailsItem(itemDetails);
+			List<Item> items = itemsFromSession(request);
+			if (request.getParameter("id") != null && request.getParameter("item-id") != null) {
+				ItemDetails itemDetails = new ItemDetails(id, desc, issue_date, expire_date, itemId);
+				boolean result = itemService.addDetailsItem(itemDetails);
+				if (result) {
+					for (int i = 0; i < items.size(); i++) {
+						if (items.get(i).getId() == itemId) {
+							items.get(i).setItemDetails(itemDetails);
+							items.set(i, items.get(i));
+							break;
+						}
+					}
+				}
+			}
+
 			loadItems(request, response);
 		} catch (Exception e) {
-			request.setAttribute("error",e.toString());
+			request.setAttribute("error", e.toString());
 			request.getRequestDispatcher("/add_details_item.jsp").forward(request, response);
 		}
 	}
 
-	private void updateItem(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+	private void updateItem(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
 		try {
-			ItemDetails itemDetails=null;
+			ItemDetails itemDetails = new ItemDetails();
 			int id = Integer.parseInt(request.getParameter("id"));
-			String desc=request.getParameter("description");
-			if(desc!=null) {
+			String desc = request.getParameter("description");
+			if (desc != null) {
 				int itemId = Integer.parseInt(request.getParameter("item-id"));
 				String issue_date = request.getParameter("issue_date");
 				String expire_date = request.getParameter("expire_date");
-				itemDetails=new ItemDetails(itemId,desc,issue_date,expire_date,id);
+				itemDetails = new ItemDetails(itemId, desc, issue_date, expire_date, id);
 			}
 			String name = request.getParameter("name");
 			double price = Double.parseDouble(request.getParameter("price"));
 			double totalPrice = Double.parseDouble(request.getParameter("total_price"));
-			Item item = new Item(id, name, price, totalPrice, itemDetails);
-			itemService.updateItem(item);
+			List<Item> items = itemsFromSession(request);
+			if (request.getParameter("id") != null) {
+				Item item = new Item(id, name, price, totalPrice, itemDetails);
+				boolean result = itemService.updateItem(item);
+				if (result) {
+					for (int i = 0; i < items.size(); i++) {
+						if (items.get(i).getId() == id) {
+							items.set(i, item);
+							break;
+						}
+					}
+				}
+			}
 			loadItems(request, response);
 		} catch (Exception e) {
-			request.setAttribute("error",e.toString());
+			request.setAttribute("error", e.toString());
 			request.getRequestDispatcher("/update_item.jsp").forward(request, response);
 		}
 	}
 
 	private void deleteItem(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
+			List<Item> items = itemsFromSession(request);
 			int itemId = Integer.parseInt(request.getParameter("id"));
-			itemService.deleteDetailsItem(itemId);
-			itemService.deleteItem(itemId);
+			if (request.getParameter("id") != null) {
+				itemService.deleteDetailsItem(itemId);
+				boolean result = itemService.deleteItem(itemId);
+				if (result) {
+					for (int i = 0; i < items.size(); i++) {
+						if (items.get(i).getId() == itemId) {
+							items.remove(i);
+							break;
+						}
+					}
+				}
+			}
 			loadItems(request, response);
 		} catch (Exception e) {
 			loadItems(request, response);
 		}
 	}
 
-	private void addItem(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+	private void addItem(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
 		try {
-			Item item = new Item(Integer.parseInt(request.getParameter("id")), request.getParameter("name"),
-					Double.parseDouble(request.getParameter("price")),
-					Double.parseDouble(request.getParameter("total_price")), null);
-			itemService.addItem(item);
+			List<Item> items = itemsFromSession(request);
+			if (request.getParameter("id") != null) {
+				Item item = new Item(Integer.parseInt(request.getParameter("id")), request.getParameter("name"),
+						Double.parseDouble(request.getParameter("price")),
+						Double.parseDouble(request.getParameter("total_price")), new ItemDetails());
+				boolean result = itemService.addItem(item);
+				if (result) {
+					items.add(item);
+				}
+			}
+
 			loadItems(request, response);
 		} catch (Exception e) {
-			request.setAttribute("error",e.toString());
+			request.setAttribute("error", e.toString());
 			request.getRequestDispatcher("/add_item.jsp").forward(request, response);
 		}
 	}
@@ -168,12 +228,25 @@ public class UserController extends HttpServlet {
 
 	private void loadItems(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
-			List<Item> items = itemService.loadItems();
-			request.setAttribute("items", items);
-			request.getRequestDispatcher("/items.jsp").forward(request, response);
+			HttpSession session = request.getSession();
+			List<Item> items = (List<Item>) session.getAttribute("items");
+			if (items == null) {
+				items = itemService.loadItems();
+				session.setAttribute("items", items);
+			}
+			// request.setAttribute("items", items);
+			// request.getRequestDispatcher("/items.jsp").forward(request, response);
+			response.sendRedirect("items.jsp");
 		} catch (Exception e) {
+			System.out.println("Error : " + e);
 			loadItems(request, response);
 		}
+	}
+
+	private List<Item> itemsFromSession(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		List<Item> items = (List<Item>) session.getAttribute("items");
+		return items;
 	}
 
 //	public String convertDateToString(String date) {

@@ -111,7 +111,8 @@ tr:hover td {
 	transition: all 0.3s ease;
 }
 
-.add-item-button:hover, .add-details-button:hover, .delete-details-button:hover, .update-item-button:hover {
+.add-item-button:hover, .add-details-button:hover,
+	.delete-details-button:hover, .update-item-button:hover {
 	opacity: 0.9;
 	transform: scale(1.07);
 }
@@ -125,7 +126,7 @@ button, input[type="submit"] {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media ( max-width : 768px) {
 	body {
 		padding: 2% 5%;
 	}
@@ -165,7 +166,7 @@ button, input[type="submit"] {
 			</tr>
 
 			<%
-			List<Item> items = (List<Item>) request.getAttribute("items");
+			List<Item> items = (List<Item>) session.getAttribute("items");
 			if (items != null) {
 				for (Item item : items) {
 			%>
@@ -174,23 +175,34 @@ button, input[type="submit"] {
 				<td><%=item.getName()%></td>
 				<td><%=item.getPrice()%></td>
 				<td><%=item.getTotalPrice()%></td>
-				<td><%=item.getItemDetails().getDescription() == null ? "No Description" : item.getItemDetails().getDescription()%></td>
-				<td><%=item.getItemDetails().getIssueDate() == null ? "No Issue Date" : item.getItemDetails().getIssueDate()%></td>
-				<td><%=item.getItemDetails().getExpireDate() == null ? "No Expire Date" : item.getItemDetails().getExpireDate()%></td>
+				<td><%=item.getItemDetails() == null || item.getItemDetails().getDescription() == null ? "No Description"
+		: item.getItemDetails().getDescription()%></td>
+				<td><%=item.getItemDetails() == null || item.getItemDetails().getIssueDate() == null ? "No Issue Date"
+		: item.getItemDetails().getIssueDate()%></td>
+				<td><%=item.getItemDetails() == null || item.getItemDetails().getExpireDate() == null ? "No Expire Date"
+		: item.getItemDetails().getExpireDate()%></td>
 				<td>
 					<div class="action">
 						<form action="UserController">
 							<input type="hidden" id="action" name="action" value="load-item">
 							<input type="hidden" id="id" name="id" value="<%=item.getId()%>">
-							<%if (item.getItemDetails().getDescription() != null) {%>
-							<input type="hidden" id="item-id" name="item-id" value="<%=item.getItemDetails().getId()%>">
-							<%} %>
-							<input class="add-item-button" type="submit" name="update" value="update">
+							<%
+							if (item.getItemDetails() != null && item.getItemDetails().getDescription() != null) {
+							%>
+							<input type="hidden" id="item-id" name="item-id"
+								value="<%=item.getItemDetails().getId()%>">
+							<%
+							}
+							%>
+							<input class="add-item-button" type="submit" name="update"
+								value="update">
 						</form>
 						<form action="UserController" method="post">
-							<input type="hidden" id="action" name="action" value="delete-item"> 
-							<input type="hidden" id="id" name="id" value="<%=item.getId()%>"> 
-							<input class="add-item-button" type="submit" name="delete" value="delete">
+							<input type="hidden" id="action" name="action"
+								value="delete-item"> <input type="hidden" id="id"
+								name="id" value="<%=item.getId()%>"> <input
+								class="add-item-button" type="submit" name="delete"
+								value="delete">
 						</form>
 						<%
 						if (item.getItemDetails().getDescription() == null) {
@@ -205,9 +217,11 @@ button, input[type="submit"] {
 						} else {
 						%>
 						<form action="UserController" method="post">
-							<input type="hidden" id="action" name="action" value="delete-details">
-							<input type="hidden" id="item-id" name="item-id" value="<%=item.getId()%>"> 
-							<input class="delete-details-button" type="submit" name="delete Details" value="delete Details">
+							<input type="hidden" id="action" name="action"
+								value="delete-details"> <input type="hidden"
+								id="item-id" name="item-id" value="<%=item.getId()%>"> <input
+								class="delete-details-button" type="submit"
+								name="delete Details" value="delete Details">
 						</form>
 						<%
 						}

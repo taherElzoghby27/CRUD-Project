@@ -8,12 +8,19 @@ public class ItemDetails {
 	private int itemId;
 
 	public ItemDetails(int id, String description, String issueDate, String expireDate, int itemId) {
-		super();
 		this.id = id;
 		this.description = description;
 		this.issueDate = issueDate;
 		this.expireDate = expireDate;
 		this.itemId = itemId;
+	}
+
+	public ItemDetails() {
+		this.id = 0;
+		this.description = null;
+		this.issueDate = null;
+		this.expireDate = null;
+		this.itemId = 0;
 	}
 
 	public int getId() {
