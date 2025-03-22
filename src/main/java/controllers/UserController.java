@@ -204,7 +204,8 @@ public class UserController extends HttpServlet {
 			if (request.getParameter("name") != null) {
 				Item item = new Item(request.getParameter("name"), Double.parseDouble(request.getParameter("price")),
 						Double.parseDouble(request.getParameter("total_price")), new ItemDetails());
-				boolean result = itemService.addItem(item);
+				int userId = (int) session.getAttribute("userId");
+				boolean result = itemService.addItem(item, userId);
 				if (result) {
 					session.setAttribute("items", null);
 				}
@@ -233,12 +234,11 @@ public class UserController extends HttpServlet {
 		try {
 			HttpSession session = request.getSession();
 			List<Item> items = (List<Item>) session.getAttribute("items");
+			int userId = (int) session.getAttribute("userId");
 			if (items == null) {
-				items = itemService.loadItems();
+				items = itemService.loadItems(userId);
 				session.setAttribute("items", items);
 			}
-			// request.setAttribute("items", items);
-			// request.getRequestDispatcher("/items.jsp").forward(request, response);
 			response.sendRedirect("items.jsp");
 		} catch (Exception e) {
 			System.out.println("Error : " + e);

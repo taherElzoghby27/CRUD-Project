@@ -6,11 +6,11 @@ import models.Item;
 import models.ItemDetails;
 
 public interface ItemService {
-	List<Item> loadItems();
+	List<Item> loadItems(int userId);
 
 	Item loaditem(int id) throws Exception;
 
-	boolean addItem(Item item) throws Exception;
+	boolean addItem(Item item, int userId) throws Exception;
 
 	boolean addDetailsItem(ItemDetails itemDetails) throws Exception;
 

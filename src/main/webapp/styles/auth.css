@@ -1,0 +1,106 @@
+body {
+    background-color: #f4f7f9;
+    padding: clamp(2rem, 10vh, 5%) clamp(1rem, 5vw, 20%);
+    font-family: "Roboto", sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  h2 {
+    color: #1a1a1a;
+    font-size: clamp(0.875rem, 2vw, 1rem); /* Reduced from 1rem-1.25rem */
+    text-align: center;
+    font-weight: 900;
+  }
+  
+  .login_class {
+    background-color: #ffffff;
+    padding: clamp(1rem, 3vw, 2rem) clamp(1rem, 3vw, 15%);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 270px;
+  }
+  
+  label {
+    color: #333333;
+    font-size: clamp(0.5rem, 1vw, 0.625rem); /* Reduced from 0.625rem-0.75rem */
+    display: block;
+    font-weight: 500;
+    padding-bottom: 3px;
+  }
+  
+  button {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: clamp(0.625rem, 1vw, 0.75rem); /* Reduced from 0.75rem-0.875rem */
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+  }
+  
+  button:active {
+    transform: translateY(1px);
+  }
+  
+  input {
+    border: 1px solid #dcdcdc;
+    outline: none;
+    padding: 0.625rem;
+    border-radius: 6px;
+    font-size: clamp(0.5rem, 1vw, 0.625rem); /* Reduced from 0.625rem-0.875rem */
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+  }
+  
+  .dont_have_account {
+    font-size: clamp(0.4375rem, 1vw, 0.5625rem); /* Reduced from 0.5rem-0.75rem */
+    color: #666666;
+    display: inline-block;
+    margin-right: 0.25rem;
+  }
+  
+  .signup {
+    font-size: clamp(0.4375rem, 1vw, 0.5625rem); /* Reduced from 0.5rem-0.75rem */
+    font-weight: 600;
+    color: #007bff;
+    display: inline-block;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .signup:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
+  
+  /* Media Query for better responsiveness */
+  @media (max-width: 480px) {
+    .login_class {
+      padding: 1.5rem;
+    }
+    
+    h2 {
+      margin-bottom: 1rem;
+    }
+    
+    input {
+      margin-bottom: 5px;
+    }
+  }

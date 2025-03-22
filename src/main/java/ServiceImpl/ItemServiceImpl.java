@@ -21,19 +21,21 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
-	public List<Item> loadItems() {
+	public List<Item> loadItems(int userId) {
 		List<Item> items = new ArrayList<>();
 		try {
 			Connection connection = dataSource.getConnection();
-			String query = "select i.id as id,i.name,i.price,i.total_price,id.id as item_details_id,id.item_id,id.describtion,id.issue_date,id.expiry_data from hr.item i LEFT join hr.item_details id on i.ID =id.ITEM_ID";
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery(query);
+			String query = "SELECT i.id,i.name,i.price,i.total_price,id.id as item_details_id ,id.item_id,id.describtion,id.issue_date,id.expiry_data from hr.USERS_ITEMS ui JOIN hr.item i ON ui.ID =? AND ui.id=i.user_id LEFT join hr.item_details id  ON i.id=id.id";
+			PreparedStatement statement = connection.prepareStatement(query);
+			statement.setInt(1, userId);
+			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
 				ItemDetails itemDetails = new ItemDetails(resultSet.getInt("item_details_id"),
 						resultSet.getString("describtion"), resultSet.getString("issue_date"),
 						resultSet.getString("expiry_data"), resultSet.getInt("item_id"));
 				Item item = new Item(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getDouble("price"),
 						resultSet.getDouble("total_price"), itemDetails);
+				System.out.println("item "+item);
 				items.add(item);
 			}
 		} catch (Exception e) {
@@ -65,14 +67,15 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
-	public boolean addItem(Item item) throws Exception {
+	public boolean addItem(Item item, int userId) throws Exception {
 		try {
 			Connection connection = dataSource.getConnection();
-			String query = "insert into hr.item (name,price,total_price) values(?,?,?)";
+			String query = "insert into hr.item (name,price,total_price,user_id) values(?,?,?,?)";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setString(1, item.getName());
 			statement.setDouble(2, item.getPrice());
 			statement.setDouble(3, item.getTotalPrice());
+			statement.setDouble(4, userId);
 			int result = statement.executeUpdate();
 			return result > 0;
 		} catch (Exception e) {
