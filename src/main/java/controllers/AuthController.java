@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,8 +48,33 @@ public class AuthController extends HttpServlet {
 		case "sign-up":
 			signUp(request, response);
 			break;
+		case "logout":
+			logout(request, response);
+			break;
 		default:
 			break;
+		}
+	}
+
+	private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		try {
+			HttpSession session = request.getSession();
+			session.removeAttribute("userId");
+			removeCookie(request, response, "userId");
+			response.sendRedirect("login.jsp");
+		} catch (Exception e) {
+			response.sendRedirect("login.jsp");
+		}
+	}
+
+	private void removeCookie(HttpServletRequest request, HttpServletResponse response, String cookieName) {
+		Cookie[] cookies = request.getCookies();
+		for (int i = 0; i < cookies.length; i++) {
+			if (cookies[i].getName().equals(cookieName)) {
+				cookies[i].setMaxAge(0);
+				response.addCookie(cookies[i]);
+				break;
+			}
 		}
 	}
 
@@ -70,10 +96,10 @@ public class AuthController extends HttpServlet {
 			boolean result = authService.signUp(new User(name, email, password));
 			if (result) {
 				User savedUser = authService.getUser(email);
-				HttpSession session = request.getSession();
-				session.setAttribute("userId", savedUser.getId());
-				session.setAttribute("userName", savedUser.getName());
-				session.setAttribute("userEmail", savedUser.getEmail());
+				request.getSession().setAttribute("userId", savedUser.getId());
+				Cookie cookie = new Cookie("userId", savedUser.getId() + "");
+				cookie.setMaxAge(60 * 60);
+				response.addCookie(cookie);
 				response.sendRedirect("UserController");
 				return;
 			} else {
@@ -99,10 +125,10 @@ public class AuthController extends HttpServlet {
 			boolean result = authService.signIn(new User(email, password));
 			if (result) {
 				User savedUser = authService.getUser(email);
-				HttpSession session = request.getSession();
-				session.setAttribute("userId", savedUser.getId());
-				session.setAttribute("userName", savedUser.getName());
-				session.setAttribute("userEmail", savedUser.getEmail());
+				request.getSession().setAttribute("userId", savedUser.getId());
+				Cookie cookie = new Cookie("userId", savedUser.getId() + "");
+				cookie.setMaxAge(60 * 60);
+				response.addCookie(cookie);
 				response.sendRedirect("UserController");
 				return;
 			} else {

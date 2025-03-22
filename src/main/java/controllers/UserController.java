@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -232,17 +233,36 @@ public class UserController extends HttpServlet {
 
 	private void loadItems(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
+			int userId = 0;
 			HttpSession session = request.getSession();
+			if (session.getAttribute("userId") != null) {
+				userId = (int) session.getAttribute("userId");
+			}
+			if (userId == 0) {
+				Cookie[] cookies = request.getCookies();
+				if (cookies == null) {
+					response.sendRedirect("login.jsp");
+					return;
+				}
+				for (int i = 0; i < cookies.length; i++) {
+					if (cookies[i].getName().equals("userId")) {
+						userId = Integer.parseInt(cookies[i].getValue());
+						session.setAttribute("userId", userId);
+					}
+				}
+			}
+			if (userId == 0) {
+				response.sendRedirect("login.jsp");
+				return;
+			}
 			List<Item> items = (List<Item>) session.getAttribute("items");
-			int userId = (int) session.getAttribute("userId");
 			if (items == null) {
 				items = itemService.loadItems(userId);
 				session.setAttribute("items", items);
 			}
 			response.sendRedirect("items.jsp");
 		} catch (Exception e) {
-			System.out.println("Error : " + e);
-			loadItems(request, response);
+			System.out.println("error " + e);
 		}
 	}
 

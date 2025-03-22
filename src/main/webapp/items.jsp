@@ -242,9 +242,12 @@ button, input[type="submit"] {
 			%>
 		</table>
 		<a href="add_item.jsp">
-			<button class="add-item-button" style="margin-top: 20px;">
-				Add Item</button>
+			<button class="add-item-button" style="margin-top: 20px;"> Add Item</button>
 		</a>
+		<form action="AuthController">
+			<input type="hidden" id="action" name="action" value="logout">
+			<input style="background-color: red; color: white;margin-left:10px;" type="submit" value="Logout">
+		</form>
 	</div>
 </body>
 </html>
